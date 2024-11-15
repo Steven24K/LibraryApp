@@ -1,0 +1,82 @@
+/* General styling for the main container */
+.main {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+    font-family: Arial, sans-serif;
+    background-color: #f8f8f8;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Styling for the main title */
+.main h1 {
+    text-align: center;
+    font-size: 2em;
+    color: #333;
+    margin-bottom: 20px;
+}
+
+/* Styling for the filter section */
+.filters {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.filters label {
+    font-weight: bold;
+    color: #666;
+}
+
+.filters select,
+.filters input[type="text"] {
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 1em;
+}
+
+.filters button {
+    padding: 8px;
+    font-size: 1em;
+}
+
+/* Styling for the book list */
+.book-list {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+
+.book-list li {
+    background-color: #fff;
+    border: 1px solid #e0e0e0;
+    border-radius: 5px;
+    padding: 15px;
+    margin-bottom: 15px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+/* Styling for individual book details */
+.book-list h2 {
+    font-size: 1.5em;
+    color: #333;
+    margin: 0 0 10px;
+}
+
+.book-list .author,
+.book-list .genre,
+.book-list .published {
+    font-size: 0.9em;
+    color: #666;
+    margin: 5px 0;
+}
+
+/* Styling for hover effect on book items */
+.book-list li:hover {
+    background-color: #f0f0f0;
+    border-color: #ccc;
+}
