@@ -23,6 +23,9 @@ Make sure the list has the following methods implemented:
 - count
 - filter
 
+- Also make a function using the existing `reduce` method on `Array` to transform an `Array`
+    to a custom linked list. 
+
 ### Exercise 2
 Applying the concept of currying, build a modular filter system where you can select 
 an attribute from a dropdown and apply the content from the search box on the list of 
