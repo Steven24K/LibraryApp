@@ -12,6 +12,8 @@ type ListMethods<a> = {
     reduce: <b>(this: List<a>, f: (acc: b, v: a) => b, init: b) => b
     map: <b>(f: (v: a) => b) => List<b>
     toArray: () => a[]
+    count: () => number
+    filter: (predicate: (v: a) => boolean) => List<a>
 }
 
 export type List<a> = (ListNode<a> | EmptyNode<a>) & ListMethods<a>
@@ -19,17 +21,23 @@ export type List<a> = (ListNode<a> | EmptyNode<a>) & ListMethods<a>
 const ListMethods = <a>(): ListMethods<a> => ({
     reduce: function <b>(this: List<a>, f: (acc: b, v: a) => b, init: b): b {
         // base case? 
-        if (this.kind =='empty') return init
+        if (this.kind == 'empty') return init
         // Action
-        return  this.tail.reduce(f, f(init, this.value))//reducer(init, this.value) 
+        return this.tail.reduce(f, f(init, this.value))//reducer(init, this.value) 
     },
     map: function <b>(this: List<a>, f: (v: a) => b): List<b> {
-        return this.reduce((acc, v) =>  ListNode(f(v), acc), EmptyNode())
+        return this.reduce((acc, v) => ListNode(f(v), acc), EmptyNode())
         // if (this.kind =='empty') return EmptyNode()
         // return ListNode(f(this.value), this.tail.map(f))
     },
-    toArray: function(this: List<a>): a[] {
+    toArray: function (this: List<a>): a[] {
         return this.reduce((acc, v) => acc.concat([v]), Array<a>()) // <a>[]
+    }, 
+    count: function (this: List<a>): number {
+        return 0
+    }, 
+    filter: function (this: List<a>, predicate: (v: a) => boolean): List<a> {
+        return EmptyNode()
     }
 
 })
