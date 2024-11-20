@@ -4,12 +4,18 @@ This application uses the bare minimum setup for a React App using Webpack and T
 
 ## Running 
 
-`npm i yarn -g` if not done allready
-
-`yarn install`
-
-`yarn start`
-
+_npm should aready be installed with node.js_
+```
+npm i -g npm # update npm
+npm i        # installs dependencies
+npm start    # start the program
+```
+Or
+```
+npm i yarn -g # if not done allready
+yarn install  # installs dependencies
+yarn start    # start the program
+```
 ## Sample case
 
 Imagine you’re working on a college library search system that helps students find books based on specific criteria. The system has a large list of books, and you want to let students filter books based on multiple criteria, such as genre, title, year published, and author.
