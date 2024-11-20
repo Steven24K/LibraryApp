@@ -34,10 +34,10 @@ const ListMethods = <a>(): ListMethods<a> => ({
         return this.reduce((acc, v) => acc.concat([v]), Array<a>()) // <a>[]
     }, 
     count: function (this: List<a>): number {
-        return 0
+        return this.reduce((acc, _) => acc + 1, 0)
     }, 
     filter: function (this: List<a>, predicate: (v: a) => boolean): List<a> {
-        return EmptyNode()
+        return this.reduce((acc, v) => predicate(v) ? ListNode(v, acc) : acc , EmptyNode())
     }
 
 })

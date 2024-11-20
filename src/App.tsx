@@ -50,7 +50,7 @@ export class App extends React.Component<AppProps, AppState> {
         }
     }
 
-    filterAction: LibraryFilter = (library: Library) => (bookFilter: BookFilter) => library.filter(bookFilter)
+    filterAction: LibraryFilter = (library: Library) => (bookFilter: BookFilter) => fromArray(library.toArray().filter(bookFilter))
 
     render(): React.ReactNode {
         return <div className="main">
@@ -59,7 +59,7 @@ export class App extends React.Component<AppProps, AppState> {
                 <label>Filter on:</label>
                 <select defaultValue={this.state.selectedFilter}>
                     <option value="title">Title</option>
-                    <option value="author">Auhtor</option>
+                    <option value="author">Author</option>
                     <option value="genre">Genre</option>
                     <option value="year">Year</option>
                 </select>
@@ -67,7 +67,7 @@ export class App extends React.Component<AppProps, AppState> {
                 <button disabled={this.state.search == ""}>Search</button>
             </div>
 
-            <h2>{this.state.library.length} books found</h2>
+            <h2>{this.state.library.count()} books found</h2>
 
             <ul className="book-list">
                 {
@@ -79,6 +79,7 @@ export class App extends React.Component<AppProps, AppState> {
                             <p className="published">Published in: {book.year}</p>
                         </li>
                     )
+                   .toArray()
                 }
             </ul>
         </div>
