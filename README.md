@@ -4,9 +4,11 @@ This application uses the bare minimum setup for a React App using Webpack and T
 
 ## Running 
 
+`npm i yarn -g` if not done allready
+
 `yarn install`
 
-`yarn watch`
+`yarn start`
 
 ## Sample case
 

@@ -4,7 +4,9 @@
     "description": "This is a library application sample case for a React app with Typescript",
     "main": "index.js",
     "scripts": {
-        "start": "webpack-dev-server --open --mode development"
+        "start": "webpack-dev-server --open --mode development",
+        "watch": "webpack -w --mode development",
+        "build": "webpack --mode production"
     },
     "license": "ISC",
     "devDependencies": {

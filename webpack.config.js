@@ -13,7 +13,7 @@ module.exports = {
     output: {
         filename: 'main.js',
         publicPath: "",
-        path: path.resolve(__dirname, 'dist')
+        path: path.resolve(__dirname, 'wwwroot/js')
     },
 
     resolve: {
@@ -58,7 +58,7 @@ module.exports = {
 
     devServer: {
         static: {
-            directory: path.join(__dirname, "dist"),
+            directory: path.join(__dirname, "wwwroot/js"),
         },
         port: 3000,
         hot: true, 
