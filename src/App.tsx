@@ -47,6 +47,40 @@ export class App extends React.Component<AppProps, AppState> {
         }
     }
 
+    componentDidMount() {
+        this.setLibraryState();
+    }
+
+    setLibraryState() {
+
+        this.setState({
+            library: {
+                kind: 'pending',
+                loader: async () => {
+                    try {
+                        const response = await fetch('http://localhost:5000/api/Library/GetAll');
+                        if (!response.ok) {
+                            throw new Error(`Error: ${response.statusText}`);
+                        }
+    
+                        const data: Library = await response.json();
+    
+                        this.setState({ library: { kind: 'fullfilled', data } });
+                        return data;
+                    } catch (error) {
+                        const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+                        this.setState({ library: { kind: 'rejected', errorMessage } });
+                        throw error;
+                    }
+                },
+            },
+        }, () => {
+            if (this.state.library.kind === 'pending' && this.state.library.loader) {
+                this.state.library.loader();
+            }
+        });
+    }
+
     // filterAction: LibraryFilter = (library: Library) => (bookFilter: BookFilter) => fromArray(library.filter(bookFilter))
 
     render(): React.ReactNode {
