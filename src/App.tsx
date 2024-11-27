@@ -56,7 +56,7 @@ export class App extends React.Component<AppProps, AppState> {
     }
 
     componentDidUpdate(prevProps: Readonly<AppProps>, prevState: Readonly<AppState>): void {
-        if ((prevState.library.kind != 'pending') && this.state.library.kind == 'pending') {
+        if (prevState.library.kind != 'pending' && this.state.library.kind == 'pending') {
             this.state.library.loader().then(data => this.setState(s => ({ ...s, library: data })))
         }
     }
