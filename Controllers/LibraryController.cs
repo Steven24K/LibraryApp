@@ -21,10 +21,12 @@ namespace LibraryApp.Controllers
             };
         }
 
+        // TODO: Add filters on each property
         [HttpGet("[action]")]
         public IActionResult GetAll() {
+            var random = new Random().Next(0, 10);
+            if (random < 3) return BadRequest("Something went wrong");
             var result = Library.Values.ToArray();
-            // TODO: Add filters on each property
             return Ok(result);
         }
 
