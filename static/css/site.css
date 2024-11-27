@@ -6,7 +6,6 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100vh;
     background-color: #f4f4f9;
 }
 /* General styling for the main container */
@@ -50,7 +49,7 @@ body {
     font-size: 1em;
 }
 
-.filters button {
+button {
     padding: 8px;
     font-size: 1em;
 }
@@ -107,7 +106,7 @@ div.loading, div.error, div.nothing {
 
 /* Loading spinner */
 div.loading {
-    background-color: rgba(0, 0, 0, 0.6);
+    background-color: rgba(102, 100, 100, 0.5);
     color: white;
     position: fixed;
     top: 0;

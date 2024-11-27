@@ -26,6 +26,7 @@ namespace LibraryApp.Controllers
         public IActionResult GetAll() {
             var random = new Random().Next(0, 10);
             if (random < 3) return BadRequest("Something went wrong");
+            Thread.Sleep(1500);
             var result = Library.Values.ToArray();
             return Ok(result);
         }

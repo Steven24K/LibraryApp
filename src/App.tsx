@@ -56,7 +56,7 @@ export class App extends React.Component<AppProps, AppState> {
     }
 
     componentDidUpdate(prevProps: Readonly<AppProps>, prevState: Readonly<AppState>): void {
-        if ((prevState.library.kind == 'idle' || prevState.library.kind == 'rejected') && this.state.library.kind == 'pending') {
+        if ((prevState.library.kind != 'pending') && this.state.library.kind == 'pending') {
             this.state.library.loader().then(data => this.setState(s => ({ ...s, library: data })))
         }
     }
@@ -65,11 +65,15 @@ export class App extends React.Component<AppProps, AppState> {
 
     render(): React.ReactNode {
         if (this.state.library.kind == 'idle') return <div className="nothing">Nothing to show yet</div>
-        if (this.state.library.kind == 'pending') return <div className="loading">Loading...</div>
+        if (this.state.library.kind == 'pending') return <div className="loading"></div>
         if (this.state.library.kind == 'rejected') 
             return <div className="error">
-                {this.state.library.errorMessage || "Something went wrong..."}
-                <button onClick={(() => this.setState(s => ({...s, library: Pending(getAllBooks)})))}>Retry</button>
+                <p>
+                    {this.state.library.errorMessage || "Something went wrong..."}
+                </p>
+                <p>
+                    <button onClick={(() => this.setState(s => ({...s, library: Pending(getAllBooks)})))}>Retry</button>
+                </p>
             </div>
 
         return <div className="main">
@@ -84,6 +88,7 @@ export class App extends React.Component<AppProps, AppState> {
                 </select>
                 <input type="text" name="search" value={this.state.search} placeholder={`Search books on ${this.state.selectedFilter}`} />
                 <button disabled={this.state.search == ""}>Search</button>
+                <button onClick={(() => this.setState(s => ({...s, library: Pending(getAllBooks)})))}>Refresh</button>
             </div>
 
             <h2>{this.state.library.data.length} books found</h2>
