@@ -1,7 +1,8 @@
 import React = require("react");
 import '../static/css/site.css'
 import { fromArray } from "./fromArray";
-import { List } from "./list";
+import { EmptyNode, List } from "./list";
+import { ApiData, Idle } from "./dataLoaders";
 
 type Book = {
     id: number
@@ -14,7 +15,7 @@ type Book = {
 type BookProps = Exclude<keyof Book, "id"> //type BookProps =  "title" | "author" | "author" | "year"
 // See: https://www.typescriptlang.org/docs/handbook/2/keyof-types.html 
 
-type Library = List<Book>
+type Library = Book[]
 
 type Func<a, b> = (_: a) => b
 
@@ -28,8 +29,10 @@ interface AppProps {
 
 }
 
+
+
 interface AppState {
-    library: Library
+    library: ApiData<Library>
     search: string | number
     selectedFilter: BookProps
 }
@@ -38,21 +41,19 @@ export class App extends React.Component<AppProps, AppState> {
     constructor(props: AppProps) {
         super(props)
         this.state = {
-            library: fromArray([
-                { id: 1, title: "The Pragmatic Programmer", author: "Andrew Hunt", genre: "Technology", year: 1999 },
-                { id: 2, title: "Clean Code", author: "Robert C. Martin", genre: "Technology", year: 2008 },
-                { id: 3, title: "To Kill a Mockingbird", author: "Harper Lee", genre: "Fiction", year: 1960 },
-                { id: 4, title: "1984", author: "George Orwell", genre: "Fiction", year: 1949 },
-                { id: 5, title: "Sapiens", author: "Yuval Noah Harari", genre: "Non-Fiction", year: 2011 },
-            ]),
+            library: Idle(),
             search: "",
             selectedFilter: "title"
         }
     }
 
-    filterAction: LibraryFilter = (library: Library) => (bookFilter: BookFilter) => fromArray(library.toArray().filter(bookFilter))
+    // filterAction: LibraryFilter = (library: Library) => (bookFilter: BookFilter) => fromArray(library.filter(bookFilter))
 
     render(): React.ReactNode {
+        if (this.state.library.kind == 'pending') return <div>Loading...</div>
+        if (this.state.library.kind == 'rejected') return <div>{this.state.library.errorMessage || "Something went wrong..."}</div>
+        if (this.state.library.kind == 'idle') return <div>Nothing to show yet</div>
+
         return <div className="main">
             <h1>Welcome to the library</h1>
             <div className="filters">
@@ -67,11 +68,11 @@ export class App extends React.Component<AppProps, AppState> {
                 <button disabled={this.state.search == ""}>Search</button>
             </div>
 
-            <h2>{this.state.library.count()} books found</h2>
+            <h2>{this.state.library.data.length} books found</h2>
 
             <ul className="book-list">
                 {
-                    this.state.library.map(book =>
+                    this.state.library.data.map(book =>
                         <li key={book.id}>
                             <h2>{book.title} </h2>
                             <p className="author">Author: {book.author}</p>
@@ -79,7 +80,6 @@ export class App extends React.Component<AppProps, AppState> {
                             <p className="published">Published in: {book.year}</p>
                         </li>
                     )
-                   .toArray()
                 }
             </ul>
         </div>
