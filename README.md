@@ -4,6 +4,8 @@ This application uses the bare minimum setup for a React App using Webpack and T
 
 ## Running 
 
+`dotnet watch run`
+
 `npm i yarn -g` if not done allready
 
 `yarn install`
