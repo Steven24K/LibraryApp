@@ -47,12 +47,21 @@ export class App extends React.Component<AppProps, AppState> {
         }
     }
 
+    componentDidMount() {
+        fetch('http://localhost:5000/api/library/getall')
+            .then(response => response.json())
+            .then(data => this.setState({ library: { kind: 'fullfilled', data: data } }))
+            .catch(error => this.setState({ library: { kind: 'rejected', errorMessage: error.message } }))
+    }
+
     // filterAction: LibraryFilter = (library: Library) => (bookFilter: BookFilter) => fromArray(library.filter(bookFilter))
 
     render(): React.ReactNode {
+        
         if (this.state.library.kind == 'pending') return <div>Loading...</div>
         if (this.state.library.kind == 'rejected') return <div>{this.state.library.errorMessage || "Something went wrong..."}</div>
         if (this.state.library.kind == 'idle') return <div>Nothing to show yet</div>
+
 
         return <div className="main">
             <h1>Welcome to the library</h1>
