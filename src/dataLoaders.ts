@@ -8,13 +8,13 @@ export type ApiData<T> = {
 } |
 {
     kind: "pending",
-    loader: () => Promise<T>
+    loader: () => Promise<ApiData<T>>
 } | {
     kind: "idle"
 }
 
 export const Idle = <T>(): ApiData<T> => ({ kind: 'idle' })
-export const Pending = <T>(_loader: () => Promise<T>): ApiData<T> => ({ kind: 'pending', loader: _loader })
+export const Pending = <T>(_loader: () => Promise<ApiData<T>>): ApiData<T> => ({ kind: 'pending', loader: _loader })
 
 
 export const FullFilled = <T>(v: T): ApiData<T> => ({ kind: 'fullfilled', data: v })

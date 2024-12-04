@@ -1,3 +1,13 @@
+/* General styles for centering and layout */
+body {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #f4f4f9;
+}
 /* General styling for the main container */
 .main {
     max-width: 800px;
@@ -39,7 +49,7 @@
     font-size: 1em;
 }
 
-.filters button {
+button {
     padding: 8px;
     font-size: 1em;
 }
@@ -79,4 +89,63 @@
 .book-list li:hover {
     background-color: #f0f0f0;
     border-color: #ccc;
+}
+
+/* Centered box styling */
+div.loading, div.error, div.nothing {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 300px;
+    height: 100px;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    font-size: 16px;
+}
+
+/* Loading spinner */
+div.loading {
+    background-color: rgba(102, 100, 100, 0.5);
+    color: white;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 999;
+}
+
+div.loading::after {
+    content: "";
+    border: 4px solid rgba(255, 255, 255, 0.3);
+    border-top: 4px solid #fff;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    animation: spin 1s linear infinite;
+}
+
+/* Spinner animation */
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+/* Error styling */
+div.error {
+    background-color: #ffe6e6;
+    color: #d9534f;
+    border: 1px solid #d9534f;
+}
+
+/* Idle styling */
+div.nothing {
+    background-color: #e6f7ff;
+    color: #31708f;
+    border: 1px solid #31708f;
 }

@@ -1,8 +1,6 @@
 import React = require("react");
 import '../static/css/site.css'
-import { fromArray } from "./fromArray";
-import { EmptyNode, List } from "./list";
-import { ApiData, Idle } from "./dataLoaders";
+import { ApiData, FullFilled, Idle, Pending, Rejected } from "./dataLoaders";
 
 type Book = {
     id: number
@@ -30,6 +28,12 @@ interface AppProps {
 }
 
 
+const getAllBooks = async (): Promise<ApiData<Library>> => {
+    const response = await fetch(`/api/Library/GetAll`)
+    if (!response.ok) return Rejected(await response.text())
+    return FullFilled(await response.json())
+}
+
 
 interface AppState {
     library: ApiData<Library>
@@ -47,12 +51,30 @@ export class App extends React.Component<AppProps, AppState> {
         }
     }
 
-    // filterAction: LibraryFilter = (library: Library) => (bookFilter: BookFilter) => fromArray(library.filter(bookFilter))
+    componentDidMount(): void {
+        this.setState(s => ({ ...s, library: Pending(getAllBooks) }))
+    }
+
+    componentDidUpdate(prevProps: Readonly<AppProps>, prevState: Readonly<AppState>): void {
+        if (prevState.library.kind != 'pending' && this.state.library.kind == 'pending') {
+            this.state.library.loader().then(data => this.setState(s => ({ ...s, library: data })))
+        }
+    }
+
+    filterAction: LibraryFilter = (library: Library) => (bookFilter: BookFilter) => library.filter(bookFilter)
 
     render(): React.ReactNode {
-        if (this.state.library.kind == 'pending') return <div>Loading...</div>
-        if (this.state.library.kind == 'rejected') return <div>{this.state.library.errorMessage || "Something went wrong..."}</div>
-        if (this.state.library.kind == 'idle') return <div>Nothing to show yet</div>
+        if (this.state.library.kind == 'idle') return <div className="nothing">Nothing to show yet</div>
+        if (this.state.library.kind == 'pending') return <div className="loading"></div>
+        if (this.state.library.kind == 'rejected') 
+            return <div className="error">
+                <p>
+                    {this.state.library.errorMessage || "Something went wrong..."}
+                </p>
+                <p>
+                    <button onClick={(() => this.setState(s => ({...s, library: Pending(getAllBooks)})))}>Retry</button>
+                </p>
+            </div>
 
         return <div className="main">
             <h1>Welcome to the library</h1>
@@ -66,6 +88,7 @@ export class App extends React.Component<AppProps, AppState> {
                 </select>
                 <input type="text" name="search" value={this.state.search} placeholder={`Search books on ${this.state.selectedFilter}`} />
                 <button disabled={this.state.search == ""}>Search</button>
+                <button onClick={(() => this.setState(s => ({...s, library: Pending(getAllBooks)})))}>Refresh</button>
             </div>
 
             <h2>{this.state.library.data.length} books found</h2>
