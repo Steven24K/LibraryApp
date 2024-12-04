@@ -1,8 +1,10 @@
 import React = require("react");
 import '../static/css/site.css'
 import { ApiData, FullFilled, Idle, Pending, Rejected } from "./dataLoaders";
+import { DataLoader } from "./DataLoader";
+import { BookDetail } from "./BookDetail";
 
-type Book = {
+export type Book = {
     id: number
     title: string
     author: string
@@ -27,19 +29,14 @@ interface AppProps {
 
 }
 
-// TODO: Make one fetch function
-
-const getAllBooks = async (): Promise<ApiData<Library>> => {
-    const response = await fetch(`/api/Library/GetAll`)
+async function getFetch<T>(url: string): Promise<ApiData<T>> {
+    const response = await fetch(url)
     if (!response.ok) return Rejected(await response.text())
     return FullFilled(await response.json())
 }
 
-const getBookById = (book: Book) => async (): Promise<ApiData<Book>> => {
-    const response = await fetch(`/api/Library/GetBookById/${book.id}`)
-    if (!response.ok) return Rejected(await response.text())
-    return FullFilled(await response.json())
-}
+const getAllBooks = async (): Promise<ApiData<Library>> => getFetch(`/api/Library/GetAll`)
+const getBookById = (book: Book) => async (): Promise<ApiData<Book>> => getFetch(`/api/Library/GetBookById/${book.id}`)
 
 
 interface AppState {
@@ -66,10 +63,10 @@ export class App extends React.Component<AppProps, AppState> {
 
     componentDidUpdate(prevProps: Readonly<AppProps>, prevState: Readonly<AppState>): void {
         if (prevState.library.kind != 'pending' && this.state.library.kind == 'pending') {
-            this.state.library.loader().then(data => this.setState(s => ({ ...s, library: data })))
+            this.state.library
         }
 
-        if (this.state.book.kind == 'pending') {
+        if (prevState.book.kind != 'pending' && this.state.book.kind == 'pending') {
             this.state.book.loader().then(data => this.setState(s => ({ ...s, book: data })))
         }
     }
@@ -77,31 +74,21 @@ export class App extends React.Component<AppProps, AppState> {
     filterAction: LibraryFilter = (library: Library) => (bookFilter: BookFilter) => library.filter(bookFilter)
 
     render(): React.ReactNode {
-        // TODO: Make a stateless function component from the markup below.
-        if (this.state.library.kind == 'idle') return <div className="nothing">Nothing to show yet</div>
-        if (this.state.library.kind == 'pending') return <div className="loading"></div>
-        if (this.state.library.kind == 'rejected')
-            return <div className="error">
-                <p>
-                    {this.state.library.errorMessage || "Something went wrong..."}
-                </p>
-                <p>
-                    <button onClick={(() => this.setState(s => ({ ...s, library: Pending(getAllBooks) })))}>Retry</button>
-                </p>
-            </div>
+        if (this.state.book.kind != 'idle') {
+            return <BookDetail
+                book={this.state.book}
+                onGoBack={() => this.setState(s => ({ ...s, book: Idle() }))}
+                onLoaded={data => this.setState(s => ({ ...s, book: data }))}
+                onRetry={() => { }}
+            />
+        }
 
-        if (this.state.book.kind == 'fullfilled') {
-            const book = this.state.book.data
-            return <div>
-                <button onClick={() => this.setState(s => ({...s, book: Idle()}))}>Go back to overview</button>
-                <h1>{book.title}</h1>
-                <p>Genre: {book.genre}</p>
-                <p>Autor: {book.author}</p>
-                <p>Year published: {book.year}</p>
-            </div> 
-        } 
-        if (this.state.book.kind == 'rejected') {
-            return <div>{this.state.book.errorMessage}</div>
+        if (this.state.library.kind != 'fullfilled') {
+            return <DataLoader<Library>
+                data={this.state.library}
+                onLoaded={data => this.setState(s => ({ ...s, library: data }))}
+                onRetry={() => this.setState(s => ({ ...s, library: Pending(getAllBooks) }))}
+            />
         }
 
         return <div className="main">
@@ -119,10 +106,14 @@ export class App extends React.Component<AppProps, AppState> {
                 <button onClick={(() => this.setState(s => ({ ...s, library: Pending(getAllBooks) })))}>Refresh</button>
             </div>
 
+
+
             <h2>{this.state.library.data.length} books found</h2>
+
 
             <ul className="book-list">
                 {
+                    this.state.library.kind == 'fullfilled' &&
                     this.state.library.data.map(book =>
                         <li key={book.id}
                             onClick={() => this.setState(s => ({ ...s, book: Pending((getBookById(book))) }))}
