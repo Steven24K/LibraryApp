@@ -5,12 +5,6 @@ import { DataLoader } from "../DataLoader"
 import { NavLink } from "react-router"
 import { NavBar } from "../shared/NavBar"
 
-type HomePageProps = {
-    selectedFilter: BookProps
-    search: string | number
-    onSearch: () => void
-}
-
 type HomePageState = {
     library: ApiData<Library>
 }
@@ -18,9 +12,40 @@ type HomePageState = {
 const getAllBooks = async (): Promise<ApiData<Library>> => getFetch(`/api/Library/GetAll`)
 
 
-export const HomePage = (props: HomePageProps) => {
-    const { search, selectedFilter, onSearch } = props
+export const HomePage = () => {
+    const [search, setSearch] = React.useState<string | number>("")
+    const [selectedFilter, setSelectedFilter] = React.useState<BookProps>("title")
     const [state, setState] = React.useState<HomePageState>({ library: Idle() })
+    const [filteredBooks, setFilteredBooks] = React.useState<Library>([])
+
+    const onSearch = () => {
+        if (state.library.kind === 'fullfilled') {
+            if (search === '') {
+                setFilteredBooks([])
+                return
+            }
+            const searchStr = search.toString().toLowerCase()
+            const filtered = state.library.data.filter(book => {
+                if (selectedFilter === 'year') {
+                    return book[selectedFilter].toString() === searchStr
+                }
+                return book[selectedFilter].toLowerCase().includes(searchStr)
+            })
+            setFilteredBooks(filtered)
+        }
+    }
+
+    const handleRefresh = () => {
+        setFilteredBooks([])
+        setSearch('')
+        setState(s => ({ ...s, library: Pending(getAllBooks) }))
+    }
+
+    const handleChangeSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setSearch(e.target.value)
+        if(e.target.value === '')
+            setFilteredBooks([])
+    }
 
     if (state.library.kind == 'idle') {
         setState(s => ({ ...s, library: Pending(getAllBooks) }))
@@ -41,25 +66,22 @@ export const HomePage = (props: HomePageProps) => {
 
         <div className="filters">
             <label>Filter on:</label>
-            <select defaultValue={selectedFilter}>
+            <select defaultValue={selectedFilter} onChange={e => setSelectedFilter(e.target.value as BookProps)}>
                 <option value="title">Title</option>
                 <option value="author">Author</option>
                 <option value="genre">Genre</option>
                 <option value="year">Year</option>
             </select>
-            <input type="text" name="search" value={search} placeholder={`Search books on ${selectedFilter}`} />
+            <input type="text" name="search" value={search} placeholder={`Search books on ${selectedFilter}`} onChange={handleChangeSearch}/>
             <button onClick={onSearch} disabled={search == ""}>Search</button>
-            <button onClick={() => setState(s => ({ ...s, library: Pending(getAllBooks) }))}>Refresh</button>
+            <button onClick={handleRefresh}>Refresh</button>
         </div>
 
-
-
-        <h2>{state.library.data.length} books found</h2>
-
+        <h2>{(filteredBooks.length > 0 ? filteredBooks : state.library.data).length} books found</h2>
 
         <ul className="book-list">
             {
-                state.library.data.map(book =>
+                (filteredBooks.length > 0 ? filteredBooks : state.library.data).map(book =>
                     <li key={book.id}>
                         <NavLink to={`/book/${book.id}`}>
                             <h2>{book.title} </h2>

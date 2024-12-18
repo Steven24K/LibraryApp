@@ -60,11 +60,7 @@ export class App extends React.Component<AppProps, AppState> {
     render(): React.ReactNode {
         return <BrowserRouter>
             <Routes>
-                <Route path='/' element={<HomePage
-                    search={this.state.search}
-                    selectedFilter={this.state.selectedFilter}
-                    onSearch={() => { }}
-                />} />
+                <Route path='/' element={<HomePage/>} />
                 <Route path="/about" element={<About />} />
                 <Route path="/contact" element={<Contact />} />
                 <Route path="/book/:id" element={<BookDetail />} />
