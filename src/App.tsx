@@ -1,7 +1,6 @@
 import React = require("react");
 import '../static/css/site.css'
-import { ApiData, FullFilled, Idle, Pending, Rejected } from "./dataLoaders";
-import { DataLoader } from "./DataLoader";
+import { ApiData, FullFilled, Rejected } from "./dataLoaders";
 import { BookDetail } from "./pages/BookDetail";
 import { HomePage } from "./pages/HomePage";
 import { BrowserRouter, HashRouter, MemoryRouter, Route, Routes } from "react-router";
@@ -22,24 +21,13 @@ export type BookProps = Exclude<keyof Book, "id"> //type BookProps =  "title" | 
 
 export type Library = Book[]
 
-type Func<a, b> = (_: a) => b
-
-type BookPredicate<FilterKey extends BookProps> = Func<Book[FilterKey], boolean> // i.e. title => title == "Advanced Types in Typescript"
-
-type BookFilter = Func<Book, BookPredicate<BookProps>> // i.e. book => title => book.title == title
-
-type LibraryFilter = Func<Library, Func<BookFilter, Library>> // i.e. books => book => title => book.title == title
-
-interface AppProps {
-
-}
+interface AppProps { }
 
 export async function getFetch<T>(url: string): Promise<ApiData<T>> {
     const response = await fetch(url)
     if (!response.ok) return Rejected(await response.text())
     return FullFilled(await response.json())
 }
-
 
 interface AppState {
     search: string | number
@@ -55,23 +43,17 @@ export class App extends React.Component<AppProps, AppState> {
         }
     }
 
-    filterAction: LibraryFilter = (library: Library) => (bookFilter: BookFilter) => library.filter(bookFilter)
-
     render(): React.ReactNode {
-        return <BrowserRouter>
-            <Routes>
-                <Route path='/' element={<HomePage
-                    search={this.state.search}
-                    selectedFilter={this.state.selectedFilter}
-                    onSearch={() => { }}
-                />} />
-                <Route path="/about" element={<About />} />
-                <Route path="/contact" element={<Contact />} />
-                <Route path="/book/:id" element={<BookDetail />} />
-
-                <Route path='*' element={<NotFound />} />
-
-            </Routes>
-        </BrowserRouter>
+        return <div className="main">
+            <BrowserRouter>
+                <Routes>
+                    <Route path='/' element={<HomePage />} />
+                    <Route path="/about" element={<About />} />
+                    <Route path="/contact" element={<Contact />} />
+                    <Route path="/book/:id" element={<BookDetail />} />
+                    <Route path='*' element={<NotFound />} />
+                </Routes>
+            </BrowserRouter>
+        </div>
     }
 }

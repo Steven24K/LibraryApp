@@ -6,6 +6,3 @@ if (domNode != null) {
     const root = createRoot(domNode)
     root.render(<App />)
 }
-
-// TODO: 
-//  - Write more routes for Home, About, Contact and BookDetail. 

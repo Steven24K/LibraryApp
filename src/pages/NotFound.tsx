@@ -6,6 +6,8 @@ export const NotFound = () => {
         <NavBar />
 
         <h1>This page does not exist</h1>
-        <NavLink to="/">Go back to home</NavLink>
+        <p>
+            <NavLink to="/">Go back to home</NavLink>
+        </p>
     </div>
 }
