@@ -1,6 +1,6 @@
-import { Book } from "./App"
-import { DataLoader } from "./DataLoader"
-import { ApiData } from "./dataLoaders"
+import { Book } from "../App"
+import { DataLoader } from "../DataLoader"
+import { ApiData } from "../dataLoaders"
 
 interface BookDetailProps {
     book: ApiData<Book>

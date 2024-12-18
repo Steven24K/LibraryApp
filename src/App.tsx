@@ -2,7 +2,8 @@ import React = require("react");
 import '../static/css/site.css'
 import { ApiData, FullFilled, Idle, Pending, Rejected } from "./dataLoaders";
 import { DataLoader } from "./DataLoader";
-import { BookDetail } from "./BookDetail";
+import { BookDetail } from "./pages/BookDetail";
+import { HomePage } from "./pages/HomePage";
 
 export type Book = {
     id: number
@@ -12,10 +13,10 @@ export type Book = {
     year: number
 }
 
-type BookProps = Exclude<keyof Book, "id"> //type BookProps =  "title" | "author" | "author" | "year"
+export type BookProps = Exclude<keyof Book, "id"> //type BookProps =  "title" | "author" | "author" | "year"
 // See: https://www.typescriptlang.org/docs/handbook/2/keyof-types.html 
 
-type Library = Book[]
+export type Library = Book[]
 
 type Func<a, b> = (_: a) => b
 
@@ -91,41 +92,12 @@ export class App extends React.Component<AppProps, AppState> {
             />
         }
 
-        return <div className="main">
-            <h1>Welcome to the library</h1>
-            <div className="filters">
-                <label>Filter on:</label>
-                <select defaultValue={this.state.selectedFilter}>
-                    <option value="title">Title</option>
-                    <option value="author">Author</option>
-                    <option value="genre">Genre</option>
-                    <option value="year">Year</option>
-                </select>
-                <input type="text" name="search" value={this.state.search} placeholder={`Search books on ${this.state.selectedFilter}`} />
-                <button disabled={this.state.search == ""}>Search</button>
-                <button onClick={(() => this.setState(s => ({ ...s, library: Pending(getAllBooks) })))}>Refresh</button>
-            </div>
-
-
-
-            <h2>{this.state.library.data.length} books found</h2>
-
-
-            <ul className="book-list">
-                {
-                    this.state.library.kind == 'fullfilled' &&
-                    this.state.library.data.map(book =>
-                        <li key={book.id}
-                            onClick={() => this.setState(s => ({ ...s, book: Pending((getBookById(book))) }))}
-                        >
-                            <h2>{book.title} </h2>
-                            <p className="author">Author: {book.author}</p>
-                            <p className="genre">Genre: {book.genre}</p>
-                            <p className="published">Published in: {book.year}</p>
-                        </li>
-                    )
-                }
-            </ul>
-        </div>
+        return <HomePage 
+        library={this.state.library.data}
+        search={this.state.search}
+        selectedFilter={this.state.selectedFilter}
+        onRefresh={() => this.setState(s => ({...s, library: Pending(getAllBooks)}))}
+        onSearch={() => {}}
+        />
     }
 }
