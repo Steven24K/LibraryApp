@@ -1,25 +1,41 @@
-import { Book } from "../App"
+import React = require("react")
+import { Book, getFetch } from "../App"
 import { DataLoader } from "../DataLoader"
-import { ApiData } from "../dataLoaders"
+import { ApiData, Idle, Pending } from "../dataLoaders"
+import { NavBar } from "../shared/NavBar"
+import { NavLink, useParams } from "react-router"
 
-interface BookDetailProps {
+interface BookState {
     book: ApiData<Book>
-    onGoBack: () => void
-    onLoaded: (data: ApiData<Book>) => void
-    onRetry: () => void
 }
 
-export const BookDetail = (props: BookDetailProps) => {
-    if (props.book.kind != 'fullfilled') return <DataLoader<Book>
-        data={props.book}
-        onLoaded={props.onLoaded}
-        onRetry={props.onRetry}
+const getBookById = (id: string) => async (): Promise<ApiData<Book>> => getFetch(`/api/Library/GetBookById/${id}`)
+
+type Params = {
+    id: string
+}
+
+export const BookDetail = () => {
+    const [state, setState] = React.useState<BookState>({ book: Idle() })
+    const { id } = useParams<Params>()
+    if (id == undefined) return <div>No id supplied</div>
+    if (state.book.kind == 'idle') {
+        // How to get the ID from the route or path?
+        // Or how to get any path property from the URL in Javascript?
+        setState(s => ({...s, book: Pending(getBookById(id))}))
+    }
+    if (state.book.kind != 'fullfilled') return <DataLoader<Book>
+        data={state.book}
+        onLoaded={data => setState(s => ({ ...s, book: data }))}
+        onRetry={() => { }}
     />
     return <div>
-        <button onClick={props.onGoBack}>Go back to overview</button>
-        <h1>{props.book.data.title}</h1>
-        <p>Genre: {props.book.data.genre}</p>
-        <p>Autor: {props.book.data.author}</p>
-        <p>Year published: {props.book.data.year}</p>
+        <NavBar />
+
+        <NavLink to="/" >Go back to overview</NavLink>
+        <h1>{state.book.data.title}</h1>
+        <p>Genre: {state.book.data.genre}</p>
+        <p>Autor: {state.book.data.author}</p>
+        <p>Year published: {state.book.data.year}</p>
     </div>
 }

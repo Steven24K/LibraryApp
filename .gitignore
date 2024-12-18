@@ -4,3 +4,5 @@ Properties
 bin
 dist
 wwwroot/js
+library.db-shm
+library.db-wal

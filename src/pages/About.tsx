@@ -1,5 +1,9 @@
+import { NavBar } from "../shared/NavBar"
+
 export const About = () => {
     return <div>
+        <NavBar />
+
         <h1>About</h1>
         <p>
             Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus sed feugiat diam, et vehicula ante. Aliquam nec sodales ligula, consequat dignissim orci. Vestibulum ultrices nibh felis, sit amet pulvinar erat laoreet quis. Mauris nec libero eget urna efficitur condimentum id eu eros. Proin sed scelerisque tortor. Curabitur pharetra nunc erat. Sed eleifend diam et odio consequat dapibus. Aliquam luctus diam non bibendum sagittis.

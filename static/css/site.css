@@ -77,6 +77,9 @@ button {
     margin: 0 0 10px;
 }
 
+.book-list a {
+    text-decoration: none;
+}
 .book-list .author,
 .book-list .genre,
 .book-list .published {
@@ -148,4 +151,20 @@ div.nothing {
     background-color: #e6f7ff;
     color: #31708f;
     border: 1px solid #31708f;
+}
+
+.navbar li {
+    display: inline-block;
+    list-style: none;
+    padding: 1rem 1rem;
+    background-color: #31708f;
+}
+
+.navbar a {
+    color: white;
+    text-decoration: none;
+}
+
+.navbar li:hover {
+    background-color: #1e3f50;
 }

@@ -13,6 +13,9 @@ public class HomeController : Controller
         _logger = logger;
     }
 
+    [HttpGet("/")]
+    [HttpGet("/{path}")]
+    [HttpGet("/{path}/{id}")]
     public IActionResult Index()
     {
         return View();

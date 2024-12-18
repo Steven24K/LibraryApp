@@ -4,6 +4,10 @@ import { ApiData, FullFilled, Idle, Pending, Rejected } from "./dataLoaders";
 import { DataLoader } from "./DataLoader";
 import { BookDetail } from "./pages/BookDetail";
 import { HomePage } from "./pages/HomePage";
+import { BrowserRouter, HashRouter, MemoryRouter, Route, Routes } from "react-router";
+import { NotFound } from "./pages/NotFound";
+import { About } from "./pages/About";
+import { Contact } from "./pages/Contact";
 
 export type Book = {
     id: number
@@ -30,19 +34,14 @@ interface AppProps {
 
 }
 
-async function getFetch<T>(url: string): Promise<ApiData<T>> {
+export async function getFetch<T>(url: string): Promise<ApiData<T>> {
     const response = await fetch(url)
     if (!response.ok) return Rejected(await response.text())
     return FullFilled(await response.json())
 }
 
-const getAllBooks = async (): Promise<ApiData<Library>> => getFetch(`/api/Library/GetAll`)
-const getBookById = (book: Book) => async (): Promise<ApiData<Book>> => getFetch(`/api/Library/GetBookById/${book.id}`)
-
 
 interface AppState {
-    library: ApiData<Library>
-    book: ApiData<Book>
     search: string | number
     selectedFilter: BookProps
 }
@@ -51,53 +50,28 @@ export class App extends React.Component<AppProps, AppState> {
     constructor(props: AppProps) {
         super(props)
         this.state = {
-            library: Idle(),
-            book: Idle(),
             search: "",
             selectedFilter: "title"
-        }
-    }
-
-    componentDidMount(): void {
-        this.setState(s => ({ ...s, library: Pending(getAllBooks) }))
-    }
-
-    componentDidUpdate(prevProps: Readonly<AppProps>, prevState: Readonly<AppState>): void {
-        if (prevState.library.kind != 'pending' && this.state.library.kind == 'pending') {
-            this.state.library
-        }
-
-        if (prevState.book.kind != 'pending' && this.state.book.kind == 'pending') {
-            this.state.book.loader().then(data => this.setState(s => ({ ...s, book: data })))
         }
     }
 
     filterAction: LibraryFilter = (library: Library) => (bookFilter: BookFilter) => library.filter(bookFilter)
 
     render(): React.ReactNode {
-        if (this.state.book.kind != 'idle') {
-            return <BookDetail
-                book={this.state.book}
-                onGoBack={() => this.setState(s => ({ ...s, book: Idle() }))}
-                onLoaded={data => this.setState(s => ({ ...s, book: data }))}
-                onRetry={() => { }}
-            />
-        }
+        return <BrowserRouter>
+            <Routes>
+                <Route path='/' element={<HomePage
+                    search={this.state.search}
+                    selectedFilter={this.state.selectedFilter}
+                    onSearch={() => { }}
+                />} />
+                <Route path="/about" element={<About />} />
+                <Route path="/contact" element={<Contact />} />
+                <Route path="/book/:id" element={<BookDetail />} />
 
-        if (this.state.library.kind != 'fullfilled') {
-            return <DataLoader<Library>
-                data={this.state.library}
-                onLoaded={data => this.setState(s => ({ ...s, library: data }))}
-                onRetry={() => this.setState(s => ({ ...s, library: Pending(getAllBooks) }))}
-            />
-        }
+                <Route path='*' element={<NotFound />} />
 
-        return <HomePage 
-        library={this.state.library.data}
-        search={this.state.search}
-        selectedFilter={this.state.selectedFilter}
-        onRefresh={() => this.setState(s => ({...s, library: Pending(getAllBooks)}))}
-        onSearch={() => {}}
-        />
+            </Routes>
+        </BrowserRouter>
     }
 }
