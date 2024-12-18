@@ -153,11 +153,25 @@ div.nothing {
     border: 1px solid #31708f;
 }
 
+.navbar {
+    display: flex;
+    justify-content: center;
+    margin: 20px 0;
+}
+
+.navbar ul {
+    display: flex;
+    gap: 20px;
+    padding: 0;
+    margin: 0;
+    list-style: none;
+}
+
 .navbar li {
     display: inline-block;
-    list-style: none;
-    padding: 1rem 1rem;
+    padding: 1rem 2rem;
     background-color: #31708f;
+    border-radius: 4px;
 }
 
 .navbar a {
